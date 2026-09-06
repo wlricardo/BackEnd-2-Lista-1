@@ -18,3 +18,6 @@ Route::post('/calcular', [PrimeiraListaController::class, 'calcular']);
 
 Route::get('/formularioTemperatura', [PrimeiraListaController::class, 'formularioTemperatura']);
 Route::post('/converter', [PrimeiraListaController::class, 'converterTemperatura']);
+
+Route::get('/formularioCPF', [PrimeiraListaController::class, 'formularioCPF']);
+Route::post('/verificar-cpf', [PrimeiraListaController::class, 'verificarCPF']);

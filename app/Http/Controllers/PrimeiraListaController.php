@@ -95,4 +95,42 @@ class PrimeiraListaController extends Controller
 
         return view('converterTemperatura', compact('temperatura', 'operacao', 'resultado'));
     }
+
+
+    // Verificar se um CPF é válido
+    public function formularioCPF()
+    {
+        return view('formularioCPF');
+    }
+
+    public function verificarCPF(Request $request)
+    {
+        $cpfValido = true;
+        $cpf = $request->input('cpf');
+        $cpf = preg_replace('/[^0-9]/is', '', $cpf);
+
+        if (strlen($cpf) != 11) {
+            $cpfValido = false;
+            return view('verificarCPF', compact('cpfValido'));
+        }
+
+        if (preg_match('/(\d)\1{10}/', $cpf)) {
+            $cpfValido = false;
+            return view('verificarCPF', compact('cpfValido'));
+        }
+
+        for ($t = 9; $t < 11; $t++) {
+            $d = 0;
+            for ($c = 0; $c < $t; $c++) {
+                $d += $cpf[$c] * (($t + 1) - $c);
+            }
+            $d = ((10 * $d) % 11) % 10;
+            if ($cpf[$c] != $d) {
+                $cpfValido = false;
+                return view('verificarCPF', compact('cpfValido'));
+            }
+        }
+
+        return view('verificarCPF', compact('cpfValido'));
+    }
 }
