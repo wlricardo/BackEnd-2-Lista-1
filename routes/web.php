@@ -21,3 +21,9 @@ Route::post('/converter', [PrimeiraListaController::class, 'converterTemperatura
 
 Route::get('/formularioCPF', [PrimeiraListaController::class, 'formularioCPF']);
 Route::post('/verificar-cpf', [PrimeiraListaController::class, 'verificarCPF']);
+
+Route::get('/formularioIMC', [PrimeiraListaController::class, 'formularioIMC']);
+Route::post('/calcular-imc', [PrimeiraListaController::class, 'calcularIMC']);
+
+Route::get('/formularioVotacao', [PrimeiraListaController::class, 'formularioVotacao'])->name('poll.index');
+Route::post('/contabilizarVotos', [PrimeiraListaController::class, 'votar']);

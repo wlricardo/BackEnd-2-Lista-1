@@ -133,4 +133,84 @@ class PrimeiraListaController extends Controller
 
         return view('verificarCPF', compact('cpfValido'));
     }
+
+
+    // Dado o peso e a altura, calcular o IMC
+    public function formularioIMC()
+    {
+        return view('formularioIMC');
+    }
+
+    public function calcularIMC(Request $request)
+    {
+        $classificacao = "";
+        $imc = 0;
+        $peso = $request->input('peso');
+        $altura = $request->input('altura');
+
+        $imc = $peso / ($altura * $altura);
+
+        switch ($imc) {
+            case ($imc < 18.5):
+                $classificacao = 'Magreza';
+                break;
+            case ($imc <= 24.9):
+                $classificacao = 'Nomal';
+                break;
+            case ($imc <= 29.9):
+                $classificacao = 'Sobrepeso';
+                break;
+            case ($imc <= 39.9):
+                $classificacao = 'Obesidade';
+                break;
+            case ($imc >= 40.0):
+        }
+
+        return view('calcularIMC', compact('peso', 'altura', 'imc', 'classificacao'));
+    }
+
+
+    // Formulário de votação simples
+    public function formularioVotacao()
+    {
+        return view('formularioVotacao');
+    }
+
+    public function votar(Request $request)
+    {
+        // 1. Pega qual foi o voto selecionado no HTML (name="opcoes")
+        $votoSelecionado = $request->input('opcoes');
+
+        // 2. Cria a estrutura padrão de contagem
+        $opcoes = [
+            'Não' => 0,
+            'Não, mas eu tenho boletos' => 0,
+            'Sim' => 0
+        ];
+
+        // 3. Recupera os votos antigos da sessão ou assume 0 se for a primeira vez
+        $opcao1 = $request->session()->get('Não', 0);
+        $opcao2 = $request->session()->get('Não, mas eu tenho boletos', 0);
+        $opcao3 = $request->session()->get('Sim', 0);
+
+        // 4. Incrementa SOMENTE a opção que o usuário de fato clicou
+        if ($votoSelecionado === 'Não') {
+            $opcao1++;
+            $request->session()->put('Não', $opcao1);
+        } elseif ($votoSelecionado === 'Não, mas eu tenho boletos') {
+            $opcao2++;
+            $request->session()->put('Não, mas eu tenho boletos', $opcao2);
+        } elseif ($votoSelecionado === 'Sim') {
+            $opcao3++;
+            $request->session()->put('Sim', $opcao3);
+        }
+
+        // 5. Atualiza o array geral com os valores novos da sessão
+        $opcoes['Não'] = $opcao1;
+        $opcoes['Não, mas eu tenho boletos'] = $opcao2;
+        $opcoes['Sim'] = $opcao3;
+
+        // 6. SOLUÇÃO DO ERRO: Retorna para o formulário injetando os dados na sessão temporária
+        return redirect()->route('poll.index')->with(['opcoes' => $opcoes, 'votado' => true]);
+    }
 }
